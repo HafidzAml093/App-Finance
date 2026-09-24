@@ -1,0 +1,78 @@
+"use client";
+
+import {
+  BanknoteIcon,
+  CirclePoundSterlingIcon,
+  LayoutDashboardIcon,
+} from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "../ui/sidebar";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+const sidebarItems = [
+  {
+    label: "Dashboard",
+    icon: <LayoutDashboardIcon />,
+    href: "/dashboard",
+  },
+  {
+    label: "Transactions",
+    icon: <BanknoteIcon />,
+    href: "/dashboard/transaction",
+  },
+];
+
+export function AppSidebar() {
+  const pathname = usePathname();
+
+  return (
+    <Sidebar collapsible="icon" variant="floating">
+      <SidebarHeader className="flex-row items-center gap-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/dashboard">
+                <CirclePoundSterlingIcon className="text-primary size-5!" />
+                <h1 className="text-2xl font-bold text-primary">Finance App</h1>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarMenu>
+            {sidebarItems.map((item) => (
+              <SidebarMenuItem key={item.label}>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.label}
+                  className={cn(
+                    "py-6 px-5 text-md",
+                    pathname === item.href
+                      ? "bg-primary text-primary-foreground font-semibold hover:bg-primary hover:text-primary-foreground"
+                      : "",
+                  )}
+                >
+                  <Link href={item.href}>
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
