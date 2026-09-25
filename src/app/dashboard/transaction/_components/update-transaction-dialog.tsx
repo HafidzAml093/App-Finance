@@ -31,12 +31,12 @@ import { format } from "date-fns";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z, { string } from "zod";
+import z from "zod";
 
 const formSchema = z.object({
-  amount: z.string().min(1, "amount is required"),
+  amount: z.string().min(1, "Amount is required"),
   type: z.enum(["income", "expense"], {
-    error: "type is required",
+    error: "Type is required",
   }),
   category: z.string().min(1, "Category is required"),
   date: z.string().min(1, "Date is required"),
@@ -68,7 +68,7 @@ export default function UpdateTransactionDialog({
         : "",
       type: selectedTransaction ? selectedTransaction.data.type : "income",
       category: selectedTransaction ? selectedTransaction.data.category : "",
-      date: selectedTransaction ? selectedTransaction.data.date : "",
+      date: selectedTransaction ? String(selectedTransaction.data.date) : "",
       description: selectedTransaction
         ? selectedTransaction.data.description
         : "",
@@ -93,7 +93,7 @@ export default function UpdateTransactionDialog({
       setSelectedTransaction(null);
       refetch();
       form.reset();
-      toast.success("Transaction Updated successfully!");
+      toast.success("Transaction updated successfully!");
     },
     onError: (error) => {
       toast.error(
@@ -112,7 +112,7 @@ export default function UpdateTransactionDialog({
         description: selectedTransaction.data.description,
       });
     }
-  }, [selectedTransaction]);
+  }, [selectedTransaction, form]);
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     mutate({
@@ -132,11 +132,10 @@ export default function UpdateTransactionDialog({
             <div>
               <DialogTitle>Update Transaction</DialogTitle>
               <DialogDescription>
-                Update the Transaction data below
+                Update the transaction data below.
               </DialogDescription>
             </div>
             <FieldGroup className="gap-3">
-              {/* Controller pertama */}
               <Controller
                 control={form.control}
                 name="amount"
@@ -156,7 +155,6 @@ export default function UpdateTransactionDialog({
                   </Field>
                 )}
               />
-              {/* Controller Kedua */}
               <Controller
                 control={form.control}
                 name="type"
@@ -165,7 +163,7 @@ export default function UpdateTransactionDialog({
                     <FieldLabel htmlFor="form-type">Type</FieldLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger id="form-type">
-                        <SelectValue placeholder="Select Type" />
+                        <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="income">Income</SelectItem>
@@ -178,7 +176,6 @@ export default function UpdateTransactionDialog({
                   </Field>
                 )}
               />
-              {/* Controller Ketiga */}
               <Controller
                 control={form.control}
                 name="category"
@@ -241,7 +238,7 @@ export default function UpdateTransactionDialog({
                     <Textarea
                       {...field}
                       id="form-description"
-                      placeholder="Enter Description"
+                      placeholder="Enter description"
                       autoComplete="off"
                     />
                     {fieldState.invalid && (

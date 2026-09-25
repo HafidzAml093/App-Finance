@@ -1,8 +1,5 @@
 import { Transaction } from "@/app/types/transaction";
-import { deleteTransaction } from "@/features/transactions/action";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import { Dispatch, SetStateAction } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { deleteTransaction } from "@/features/transactions/action";
+import { useMutation } from "@tanstack/react-query";
+import { Dispatch, SetStateAction } from "react";
+import { toast } from "sonner";
 
 export default function DeleteTransactionDialog({
   selectedTransaction,
@@ -20,12 +20,12 @@ export default function DeleteTransactionDialog({
 }: {
   selectedTransaction: {
     data: Omit<Transaction, "user_id" | "embedding">;
-    action: "edit" | "delete";
+    action: "update" | "delete";
   } | null;
   setSelectedTransaction: Dispatch<
     SetStateAction<{
       data: Omit<Transaction, "user_id" | "embedding">;
-      action: "edit" | "delete";
+      action: "update" | "delete";
     } | null>
   >;
   refetch: () => void;
@@ -52,10 +52,10 @@ export default function DeleteTransactionDialog({
     >
       <DialogContent className="gap-4">
         <DialogHeader className="gap-4">
-          <DialogTitle>Are You Sure?</DialogTitle>
+          <DialogTitle>Are you sure?</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. this will permanently delete your
-            transactions data form the database.
+            This action cannot be undone. This will permanently delete your
+            transactions data from the database.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -73,7 +73,6 @@ export default function DeleteTransactionDialog({
               if (selectedTransaction) mutate(selectedTransaction.data.id);
             }}
           >
-            {" "}
             {isPending ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>

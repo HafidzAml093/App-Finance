@@ -1,3 +1,4 @@
+import { Transaction } from "@/app/types/transaction";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -6,6 +7,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -18,25 +34,10 @@ import {
 import { getTransactions } from "@/features/transactions/action";
 import { cn, convertToIDR } from "@/lib/utils";
 import { PencilIcon, Trash2Icon } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Transaction } from "@/app/types/transaction";
 import DeleteTransactionDialog from "./delete-transaction-dialog";
+import UpdateTransactionDialog from "./update-transaction-dialog";
 
 const TABLE_HEADER = [
   "#",
@@ -82,16 +83,16 @@ export default function TransactionTable({
 
   const [selectedTransaction, setSelectedTransaction] = useState<{
     data: Omit<Transaction, "user_id" | "embedding">;
-    action: "edit" | "delete";
+    action: "update" | "delete";
   } | null>(null);
 
   return (
     <Fragment>
-      <Card className="gap-2 w-ful">
+      <Card className="w-full gap-2">
         <CardHeader className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
           <div>
             <CardTitle>Recent Transaction</CardTitle>
-            <CardDescription>Your Latest financial activities</CardDescription>
+            <CardDescription>Your latest financial activities.</CardDescription>
           </div>
           <div>
             <Input
@@ -137,7 +138,12 @@ export default function TransactionTable({
                         variant="ghost"
                         size="icon"
                         className="text-muted-foreground hover:text-yellow-500"
-                        onClick={() => {}}
+                        onClick={() => {
+                          setSelectedTransaction({
+                            data: transaction,
+                            action: "update",
+                          });
+                        }}
                       >
                         <PencilIcon className="size-4" />
                       </Button>
@@ -145,7 +151,12 @@ export default function TransactionTable({
                         variant="ghost"
                         size="icon"
                         className="text-muted-foreground hover:text-destructive"
-                        onClick={() => {}}
+                        onClick={() => {
+                          setSelectedTransaction({
+                            data: transaction,
+                            action: "delete",
+                          });
+                        }}
                       >
                         <Trash2Icon className="size-4" />
                       </Button>
@@ -157,7 +168,9 @@ export default function TransactionTable({
               <TableCaption className="mb-4">Loading...</TableCaption>
             )}
             {!isLoading && transactions?.data?.length === 0 && (
-              <TableCaption className="mb-4">No transaction found</TableCaption>
+              <TableCaption className="mb-4">
+                No transactions found
+              </TableCaption>
             )}
           </Table>
           <div className="flex items-center justify-between mt-4">
@@ -216,7 +229,11 @@ export default function TransactionTable({
         setSelectedTransaction={setSelectedTransaction}
         refetch={refetch}
       />
-      <UpdateTransactionDialog />
+      <UpdateTransactionDialog
+        selectedTransaction={selectedTransaction}
+        setSelectedTransaction={setSelectedTransaction}
+        refetch={refetch}
+      />
     </Fragment>
   );
 }
