@@ -35,6 +35,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Transaction } from "@/app/types/transaction";
+import DeleteTransactionDialog from "./delete-transaction-dialog";
 
 const TABLE_HEADER = [
   "#",
@@ -77,6 +79,11 @@ export default function TransactionTable({
     }, 500);
     return () => clearTimeout(timer);
   });
+
+  const [selectedTransaction, setSelectedTransaction] = useState<{
+    data: Omit<Transaction, "user_id" | "embedding">;
+    action: "edit" | "delete";
+  } | null>(null);
 
   return (
     <Fragment>
@@ -204,6 +211,12 @@ export default function TransactionTable({
           </div>
         </CardContent>
       </Card>
+      <DeleteTransactionDialog
+        selectedTransaction={selectedTransaction}
+        setSelectedTransaction={setSelectedTransaction}
+        refetch={refetch}
+      />
+      <UpdateTransactionDialog />
     </Fragment>
   );
 }
